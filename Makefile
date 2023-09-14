@@ -8,7 +8,8 @@ OPV := $(OWNER)/$(PROJECT):$(VERSION)
 DOCKERCMD := "docker"
 
 # https://hub.docker.com/_/alpine
-ALPINE_PLATFORMS := "alpine/amd64,alpine/arm64v8"
+#ALPINE_PLATFORMS := "alpine/amd64,alpine/arm64v8"
+ALPINE_PLATFORMS := "linux/amd64,linux/arm64/v8"
 
 # additional linux capabilities
 CAPS=
@@ -26,10 +27,14 @@ MY_GITREF := $(shell git rev-parse --short HEAD)
 docker-build:
 	@echo MY_GITREF is $(MY_GITREF)
 	$(DOCKERCMD) buildx ls
-	$(DOCKERCMD) buildx create --name mybuilder --use --bootstrap
-	$(DOCKERCMD) buildx inspect --name mybuilder
-	$(DOCKERCMD) buildx build --platform $(ALPINE_PLATFORMS) -f Dockerfile -t $(OPV) .
+	## builder might already be created from previous run
+	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container --bootstrap --use || true
+	## build multi-platform images
+	$(DOCKERCMD) buildx build --platform $(ALPINE_PLATFORMS) -f Dockerfile -t $(OPV) --push .
+	$(DOCKERCMD) buildx inspect mybuilder
 	$(DOCKERCMD) buildx ls
+	## by default, creates OCI mediaType: application/vnd.oci.image.index.v1+json
+	$(DOCKERCMD) manifest inspect $(OPV)
 
 ## cleans docker image
 clean:
