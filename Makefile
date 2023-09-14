@@ -1,21 +1,27 @@
 OWNER := fabianlee
 PROJECT := tiny-tools-multi-arch
 VERSION := 1.0.0
+
+# OCI image index schema (not supported by older container registry servers)
+# https://github.com/opencontainers/image-spec/blob/main/manifest.md
 OPV := $(OWNER)/$(PROJECT):$(VERSION)
 
+# Docker v2.2 image list index schema (fat manifest, with broad support)
+# https://github.com/distribution/distribution/blob/main/docs/spec/manifest-v2-2.md
+OPV22 := $(OWNER)/$(PROJECT)v22:$(VERSION)
+
 # you may need to change to "sudo docker" if not a member of 'docker' group
-# add user to docker group: sudo usermod -aG docker $USER
+# to add user to docker group: sudo usermod -aG docker $USER
 DOCKERCMD := "docker"
 
 # https://hub.docker.com/_/alpine
-#ALPINE_PLATFORMS := "alpine/amd64,alpine/arm64v8"
 ALPINE_PLATFORMS := "linux/amd64,linux/arm64/v8"
 
 # additional linux capabilities
 CAPS=
 #CAPS= --cap-add SYS_TIME --cap-add SYS_NICE
 
-# chrony config file
+# local volumes
 VOL_FLAG=
 #VOL_FLAG= -v $(shell pwd)/chrony.conf:/etc/chrony/chrony.conf:ro
 
@@ -23,8 +29,8 @@ BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
 # unique id from last git commit
 MY_GITREF := $(shell git rev-parse --short HEAD)
 
-## builds docker image
-docker-build:
+## builds multi-arch docker image using OCI image manifest
+docker-multi-arch-build-push:
 	@echo MY_GITREF is $(MY_GITREF)
 	$(DOCKERCMD) buildx ls
 	## builder might already be created from previous run
@@ -35,6 +41,14 @@ docker-build:
 	$(DOCKERCMD) buildx ls
 	## by default, creates OCI mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV)
+
+## converts OCI image manifest to Docker v2.2 manifest
+## https://github.com/regclient/regclient/blob/main/docs/regctl.md
+docker-multi-arch-push-dockerv22:
+	[ -f regctl ] || curl -L https://github.com/regclient/regclient/releases/latest/download/regctl-linux-amd64 >regctl
+	chmod 755 regctl
+	./regctl image mod $(OPV) --to-docker --create $(OPV22)
+	$(DOCKERCMD) manifest inspect $(OPV22)
 
 ## cleans docker image
 clean:
