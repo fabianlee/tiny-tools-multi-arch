@@ -1,6 +1,6 @@
 OWNER := fabianlee
 PROJECT := tiny-tools-multi-arch
-VERSION := 1.0.0
+VERSION := 2.0.0
 
 # OCI image index schema (not supported by older container registry servers)
 # https://github.com/opencontainers/image-spec/blob/main/manifest.md
@@ -14,8 +14,8 @@ OPV22 := $(OWNER)/$(PROJECT)v22:$(VERSION)
 # to add user to docker group: sudo usermod -aG docker $USER
 DOCKERCMD := "docker"
 
-# https://hub.docker.com/_/alpine
-ALPINE_PLATFORMS := "linux/amd64,linux/arm64/v8"
+# https://github.com/docker-library/bashbrew/blob/v0.1.2/architecture/oci-platform.go#L14-L27
+PLATFORMS_LIST := "linux/amd64,linux/arm64/v8,linux/arm/v7"
 
 # additional linux capabilities
 CAPS=
@@ -25,8 +25,8 @@ CAPS=
 VOL_FLAG=
 #VOL_FLAG= -v $(shell pwd)/chrony.conf:/etc/chrony/chrony.conf:ro
 
+# build time values
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
-# unique id from last git commit
 MY_GITREF := $(shell git rev-parse --short HEAD)
 
 ## builds multi-arch docker image using OCI image manifest
@@ -34,12 +34,12 @@ docker-multi-arch-build-push:
 	@echo MY_GITREF is $(MY_GITREF)
 	$(DOCKERCMD) buildx ls
 	## builder might already be created from previous run
-	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container --bootstrap --use || true
+	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container --use || true
 	## build multi-platform images
-	$(DOCKERCMD) buildx build --platform $(ALPINE_PLATFORMS) -f Dockerfile -t $(OPV) --push .
+	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) -f Dockerfile -t $(OPV) --push .
 	$(DOCKERCMD) buildx inspect mybuilder
 	$(DOCKERCMD) buildx ls
-	## by default, creates OCI mediaType: application/vnd.oci.image.index.v1+json
+	## by default, creates OCI schema, mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV)
 
 ## converts OCI image manifest to Docker v2.2 manifest
@@ -49,6 +49,19 @@ docker-multi-arch-push-dockerv22:
 	chmod 755 regctl
 	./regctl image mod $(OPV) --to-docker --create $(OPV22)
 	$(DOCKERCMD) manifest inspect $(OPV22)
+
+docker-run-amd64:
+	$(DOCKERCMD) buildx create --name mybuilder-amd64 --driver docker-container --use || true
+	$(DOCKERCMD) buildx use mybuilder-amd64
+	$(DOCKERCMD) buildx build --platform linux/amd64 --load -t $(OPV) -f Dockerfile .
+	$(DOCKERCMD) buildx rm mybuilder-amd64
+	$(DOCKERCMD) run --platform linux/amd64 $(OPV) uname -m
+docker-run-arm64:
+	$(DOCKERCMD) buildx create --name mybuilder-arm64 --driver docker-container --use || true
+	$(DOCKERCMD) buildx use mybuilder-arm64
+	$(DOCKERCMD) buildx build --platform linux/arm64/v8 --load -t $(OPV) -f Dockerfile .
+	$(DOCKERCMD) buildx rm mybuilder-arm64
+	$(DOCKERCMD) run --platform linux/arm64/v8 $(OPV) uname -m
 
 ## cleans docker image
 clean:

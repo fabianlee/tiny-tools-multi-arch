@@ -1,9 +1,9 @@
-# Tiny Tools
+# Tiny Tools with manifest list for multiple architectures (amd64,arm64)
 
-Based on Alpine. Includes `curl`, `dig`, `nc`, `jq` and `fish` for now.
+Based on Alpine. Includes: curl, dig, nc, jq, ntpdate, mutt, ssmtp
 
-Needs about 11 MB on Disk.
+Image Size: ~15Mb
 
 ```bash
-docker run -ti giantswarm/tiny-tools sh
+docker run -ti fabianlee/tiny-tools-multi-arch sh
 ```
