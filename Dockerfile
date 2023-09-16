@@ -1,5 +1,3 @@
-#ARG ARCH=
-#FROM ${ARCH}/alpine:3.18.3
 FROM alpine:3.18.3
 
 # latest certs
@@ -21,7 +19,9 @@ RUN apk add --update tzdata --no-cache &&\
 RUN apk add --update --no-cache \
   curl bind-tools netcat-openbsd coreutils jq chrony mutt ssmtp
 
-# debug
+# standard Docker arguments
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /build.log
+# custom build argument
+ARG BUILD_TIME
+RUN echo "[$BUILD_TIME] building on host that is $BUILDPLATFORM, for the target architecture $TARGETPLATFORM" > /build.log
