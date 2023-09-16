@@ -16,7 +16,6 @@ DOCKERCMD := "docker"
 
 # https://github.com/docker-library/bashbrew/blob/v0.1.2/architecture/oci-platform.go#L14-L27
 PLATFORMS_LIST := "linux/amd64,linux/arm64/v8,linux/arm/v7"
-PLATFORM_TEST  := "linux/arm64/v8"
 
 # additional linux capabilities
 CAPS=
@@ -28,11 +27,11 @@ VOL_FLAG=
 
 # build time values
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
-MY_GITREF := $(shell git rev-parse --short HEAD)
+GITREF := $(shell git rev-parse --short HEAD)
 
 ## builds multi-arch docker image using OCI image manifest
 docker-multi-arch-build-push:
-	@echo MY_GITREF is $(MY_GITREF)
+	@echo GITREF is $(GITREF)
 	@echo checking for 'docker login' required in this step
 	if docker system info | grep -E "Username|Registry" ; then \
 	echo "logged into Docker"; \
@@ -45,7 +44,7 @@ docker-multi-arch-build-push:
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx inspect mybuilder | grep ^Driver
 	#
-	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" -f Dockerfile -t $(OPV) --push .
+	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) --push .
 	#
 	# creates OCI manifest index schema, mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV) | head
@@ -58,13 +57,14 @@ docker-multi-arch-push-dockerv22:
 	./regctl image mod $(OPV) --to-docker --create $(OPV22)
 	$(DOCKERCMD) manifest inspect $(OPV22) | head
 
-docker-run-amd64:
+## local builds of specific target platforms
+docker-build-run-amd64:
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx build --platform linux/amd64 --load -t $(OPV) -f Dockerfile .
 	$(DOCKERCMD) image ls | head
 	$(DOCKERCMD) run --platform linux/amd64 $(OPV) uname -m
-docker-run-arm64:
+docker-build-run-arm64:
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx build --platform linux/arm64/v8 --load -t $(OPV) -f Dockerfile .
@@ -75,24 +75,31 @@ docker-run-arm64:
 clean:
 	$(DOCKERCMD) image rm -f $(OPV) || true
 
-## runs container in foreground
-docker-run-fg:
-	$(DOCKERCMD) run -it --platform $(PLATFORM_TEST) --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
+## runs specific versions in foreground
+docker-run-fg-amd64: clean
+	$(DOCKERCMD) run -it --platform linux/amd64 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
+docker-run-fg-arm64: clean
+	$(DOCKERCMD) run -it --platform linux/arm64/v8 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
 
-## run container in background
-docker-run-bg: 
-	$(DOCKERCMD) run -d --platform $(PLATFORM_TEST) --network host $(CAPS) $(VOL_FLAG) --rm --name $(PROJECT) $(OPV) /bin/sh -c 'cat /build.log; while [ 1 ]; do echo "sleeping for 10..";sleep 10; done'
+## runs container in foreground (native arch)
+docker-run-fg: clean
+	$(DOCKERCMD) run -it --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
+
+## run container in background (native arch)
+docker-run-bg: docker-stop clean
+	$(DOCKERCMD) run -d --network host $(CAPS) $(VOL_FLAG) --rm --name $(PROJECT) $(OPV) /bin/sh -c 'cat /build.log; while [ 1 ]; do echo "sleeping for 10..";sleep 10; done'
 	$(DOCKERCMD) ps
 
-## get into console of container running in background
+## attach to console of container running in background
 docker-cli-bg:
 	$(DOCKERCMD) exec -it $(PROJECT) sh
 
-## tails $(DOCKERCMD)logs
+## stops container running in background
+docker-stop:
+	$(DOCKERCMD) stop $(PROJECT) || true
+	$(DOCKERCMD) ps
+
+## tails logs
 docker-logs:
 	$(DOCKERCMD) logs $(PROJECT)
 
-## stops container running in background
-docker-stop:
-	$(DOCKERCMD) stop $(PROJECT)
-	$(DOCKERCMD) ps

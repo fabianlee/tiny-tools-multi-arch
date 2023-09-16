@@ -14,14 +14,16 @@ RUN apk add --update tzdata --no-cache &&\
 # bind-tools: dig,nslookup for DNS lookup
 # netcat-opensbd: nc for netcat
 # jq: json parsing
-# chrony: ntpdate for checking
+# yq: yaml parsing
+# ntpsec: ntpdig for ntp client time query
 # mutt,ssmtp: SMTP client testing
 RUN apk add --update --no-cache \
-  curl bind-tools netcat-openbsd coreutils jq chrony mutt ssmtp
+  curl bind-tools netcat-openbsd coreutils jq ntpsec mutt ssmtp
 
 # standard Docker arguments
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 # custom build argument
 ARG BUILD_TIME
-RUN echo "[$BUILD_TIME] building on host that is $BUILDPLATFORM, for the target architecture $TARGETPLATFORM" > /build.log
+ARG GITREF
+RUN echo "[$BUILD_TIME] [$GITREF] building on host that is $BUILDPLATFORM, for the target architecture $TARGETPLATFORM" > /build.log
