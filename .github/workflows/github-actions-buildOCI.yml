@@ -101,5 +101,5 @@ jobs:
             MY_BUILTBY=github-action
             BUILD_TIME=${{ steps.get_buildargs.outputs.BUILD_TIME }}
             GITREF=${{ steps.get_buildargs.outputs.GITREF }}
-            GITREF_TEST="${{ github.sha }}"
-
+            GITREF_long="${{ github.sha }}"
+            GITREF_short="${{ github.sha_short }}"

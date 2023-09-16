@@ -15,7 +15,7 @@ OPV22 := $(OWNER)/$(PROJECT)v22:$(VERSION)
 DOCKERCMD := "docker"
 
 # https://github.com/docker-library/bashbrew/blob/v0.1.2/architecture/oci-platform.go#L14-L27
-PLATFORMS_LIST := "linux/amd64,linux/arm64,linux/arm"
+PLATFORMS_LIST := "linux/amd64,linux/arm64,linux/arm/v7"
 
 # additional linux capabilities
 CAPS=
@@ -70,6 +70,12 @@ docker-build-run-arm64:
 	$(DOCKERCMD) buildx build --platform linux/arm64 --load -t $(OPV) -f Dockerfile .
 	$(DOCKERCMD) image ls | head
 	$(DOCKERCMD) run --platform linux/arm64 $(OPV) uname -m
+docker-build-run-arm32:
+	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
+	$(DOCKERCMD) buildx use mybuilder
+	$(DOCKERCMD) buildx build --platform linux/arm/v7 --load -t $(OPV) -f Dockerfile .
+	$(DOCKERCMD) image ls | head
+	$(DOCKERCMD) run --platform linux/arm/v7 $(OPV) uname -m
 
 ## cleans docker image
 clean:
