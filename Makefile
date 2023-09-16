@@ -86,6 +86,8 @@ docker-run-fg-amd64: clean
 	$(DOCKERCMD) run -it --platform linux/amd64 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
 docker-run-fg-arm64: clean
 	$(DOCKERCMD) run -it --platform linux/arm64 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
+docker-run-fg-arm32: clean
+	$(DOCKERCMD) run -it --platform linux/arm/v7 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
 
 ## runs container in foreground (native arch)
 docker-run-fg: clean
