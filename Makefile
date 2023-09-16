@@ -15,7 +15,7 @@ OPV22 := $(OWNER)/$(PROJECT)v22:$(VERSION)
 DOCKERCMD := "docker"
 
 # https://github.com/docker-library/bashbrew/blob/v0.1.2/architecture/oci-platform.go#L14-L27
-PLATFORMS_LIST := "linux/amd64,linux/arm64/v8,linux/arm/v7"
+PLATFORMS_LIST := "linux/amd64,linux/arm64,linux/arm"
 
 # additional linux capabilities
 CAPS=
@@ -39,7 +39,7 @@ docker-multi-arch-build-push:
 	echo "NOT logged into Docker"; false; \
 	fi
 	$(DOCKERCMD) buildx ls
-	# must creaet because 'default' does not have driver capable of multi-platform
+	# must create because 'default' does not have driver capable of multi-platform
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx inspect mybuilder | grep ^Driver
@@ -67,9 +67,9 @@ docker-build-run-amd64:
 docker-build-run-arm64:
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
-	$(DOCKERCMD) buildx build --platform linux/arm64/v8 --load -t $(OPV) -f Dockerfile .
+	$(DOCKERCMD) buildx build --platform linux/arm64 --load -t $(OPV) -f Dockerfile .
 	$(DOCKERCMD) image ls | head
-	$(DOCKERCMD) run --platform linux/arm64/v8 $(OPV) uname -m
+	$(DOCKERCMD) run --platform linux/arm64 $(OPV) uname -m
 
 ## cleans docker image
 clean:
@@ -79,7 +79,7 @@ clean:
 docker-run-fg-amd64: clean
 	$(DOCKERCMD) run -it --platform linux/amd64 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
 docker-run-fg-arm64: clean
-	$(DOCKERCMD) run -it --platform linux/arm64/v8 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
+	$(DOCKERCMD) run -it --platform linux/arm64 --network host $(CAPS) $(VOL_FLAG) --rm $(OPV) sh
 
 ## runs container in foreground (native arch)
 docker-run-fg: clean
