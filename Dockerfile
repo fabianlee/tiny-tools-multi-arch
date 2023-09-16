@@ -23,7 +23,8 @@ RUN apk add --update --no-cache \
 # standard Docker arguments
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
-# custom build argument
+# custom build arguments
 ARG BUILD_TIME
 ARG GITREF
+# persist these build time arguments into container as debug
 RUN echo "[$BUILD_TIME] [$GITREF] building on host that is $BUILDPLATFORM, for the target architecture $TARGETPLATFORM" > /build.log
