@@ -5,6 +5,7 @@ VERSION := 2.0.0
 # OCI image index schema (not supported by older container registry servers)
 # https://github.com/opencontainers/image-spec/blob/main/manifest.md
 OPV := $(OWNER)/$(PROJECT):$(VERSION)
+OPV_LATEST := $(OWNER)/$(PROJECT):latest
 
 # Docker v2.2 image list index schema (fat manifest, with broad support)
 # https://github.com/distribution/distribution/blob/main/docs/spec/manifest-v2-2.md
@@ -44,7 +45,7 @@ docker-multi-arch-build-push:
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx inspect mybuilder | grep ^Driver
 	#
-	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) --push .
+	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) -t $(OPV_LATEST) --push .
 	#
 	# creates OCI manifest index schema, mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV) | head
