@@ -87,7 +87,7 @@ jobs:
         run: echo -e "BUILD_TIME=$(date -u '+%Y-%m-%d_%H:%M:%S')\nGITREF=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         id: get_buildargs
 
-      # build OCI image and push to registries (Docker Hub and Github Container Registry)
+      # build OCI image and push to Github Container Registry
       - name: build and push docker image
         uses: docker/build-push-action@v5
         with:
