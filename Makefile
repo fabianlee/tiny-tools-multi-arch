@@ -39,13 +39,14 @@ docker-multi-arch-build-push:
 	else \
 	echo "NOT logged into Docker"; false; \
 	fi
+	$(DOCKERCMD) buildx version
 	$(DOCKERCMD) buildx ls
 	# must create because 'default' does not have driver capable of multi-platform
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx inspect mybuilder | grep ^Driver
 	#
-	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) -t $(OPV_LATEST) --push .
+	$(DOCKERCMD) buildx build --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) -t $(OPV_LATEST) --push --provenance=false .
 	#
 	# creates OCI manifest index schema, mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV) | head
