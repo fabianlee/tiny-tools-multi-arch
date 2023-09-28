@@ -26,8 +26,8 @@ CAPS=
 VOL_FLAG=
 #VOL_FLAG= -v $(shell pwd)/chrony.conf:/etc/chrony/chrony.conf:ro
 
-PROVENANCE_FLAG=
-#PROVENANCE_FLAG= --provenance=false
+# disable provenance attestations
+PROVENANCE_FLAG= --provenance=false
 
 # build time values
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
@@ -48,8 +48,8 @@ docker-multi-arch-build-push:
 	$(DOCKERCMD) buildx create --name mybuilder --driver docker-container || true
 	$(DOCKERCMD) buildx use mybuilder
 	$(DOCKERCMD) buildx inspect mybuilder | grep ^Driver
-	#
-	$(DOCKERCMD) buildx build --progress plain --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) -t $(OPV_LATEST) --push $(PROVENANCE_FLAG) .
+	# disable provenance, use OCI mediaType for manifest index (not Docker v2.2 manifest)
+	$(DOCKERCMD) buildx build --output type=registry,oci-mediatypes=true --progress plain --platform $(PLATFORMS_LIST) --build-arg "BUILD_TIME=$(BUILD_TIME)" --build-arg "GITREF=$(GITREF)" -f Dockerfile -t $(OPV) -t $(OPV_LATEST) --push $(PROVENANCE_FLAG) .
 	#
 	# creates OCI manifest index schema, mediaType: application/vnd.oci.image.index.v1+json
 	$(DOCKERCMD) manifest inspect $(OPV) | head
