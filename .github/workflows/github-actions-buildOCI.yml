@@ -66,8 +66,10 @@ jobs:
           echo "GITHUB_SHA = $GITHUB_SHA"
           short_sha=`git rev-parse --short $GITHUB_SHA`
           echo "short SHA = $short_sha"
-          echo git for-each-ref | grep ^$GITHUB_SHA
-          git for-each-ref | grep ^$GITHUB_SHA
+          git for-each-ref
+          echo =============
+          echo git for-each-ref | grep ^${GITHUB_SHA}
+          git for-each-ref | grep ^${GITHUB_SHA}
           echo trying with filter for origin
           git for-each-ref | grep ^$GITHUB_SHA | grep origin
           echo trying 2nd time
