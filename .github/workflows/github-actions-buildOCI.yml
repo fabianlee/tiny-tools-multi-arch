@@ -15,6 +15,7 @@ env:
 
 jobs:
   get_branch_from_tag:
+    runs-on: ubuntu-22.04
     steps:
       - env | sort
       - echo ================================
