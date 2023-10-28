@@ -16,7 +16,7 @@ docker run -ti fabianlee/tiny-tools-multi-arch sh
 
 ```
 newtag=v1.0.1
-git commit -a -m "changes for new tag $newtag" && git push
+git commit -a -m "changes for new tag $newtag" && git push -o ci.skip
 git tag $newtag && git push origin $newtag
 ```
 
