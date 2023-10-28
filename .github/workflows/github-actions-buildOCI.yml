@@ -61,7 +61,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: calculate branch name of tag
-        if: $GITHUB_REF_TYPE == "tag"
+        if: ${{ GITHUB_REF_TYPE == 'tag' }}
         run: |
           echo "GITHUB_SHA = $GITHUB_SHA"
           short_sha=`git rev-parse --short $GITHUB_SHA)`
