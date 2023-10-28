@@ -35,6 +35,8 @@ jobs:
       # checkout
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # all history for tags and branches, needed to resolve tag->branch name
 
 #      # https://docs.docker.com/build/ci/github-actions/multi-platform/
 #      # QEMU for software emulation of multiple platforms
