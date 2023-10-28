@@ -70,7 +70,10 @@ jobs:
           echo "short SHA = $short_sha"
           git for-each-ref
           echo =============
-          echo git for-each-ref | grep ^${GITHUB_SHA}
+          echo "git for-each-ref | grep ^${GITHUB_SHA}"
+          echo without caret
+          git for-each-ref | grep ${GITHUB_SHA}
+          echo with caret
           git for-each-ref | grep ^${GITHUB_SHA}
           echo trying with filter for origin
           git for-each-ref | grep ^$GITHUB_SHA | grep origin
