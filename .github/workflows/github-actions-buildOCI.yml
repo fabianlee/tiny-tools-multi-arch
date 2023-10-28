@@ -14,35 +14,28 @@ env:
   FULL_IMAGE_NAME: ${{ github.repository }} # full image name: owner/image
 
 jobs:
-  get_branch_from_tag:
-    runs-on: ubuntu-22.04
-    steps:
-      - "env | sort"
-      - echo ================================
-      - echo GITHUB_SHA = $GITHUB_SHA
-      - echo GITHUB_REF = $GITHUB_REF
 
-#  build-oci-image:
-#    # https://github.com/actions/runner-images
-#    runs-on: ubuntu-22.04
-#
-#    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
-#    permissions:
-#      contents: read # for actions/checkout
-#      packages: write # for OCI build
-#      #id-token: write # for requesting OIDC JWT from 3rd party
-#
-#    steps:
-#
-#      # debug
-#      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event from ${{ github.actor }}."
-#      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-#      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-#
-#      # checkout
-#      - name: Check out repository code
-#        uses: actions/checkout@v4
-#
+  build-oci-image:
+    # https://github.com/actions/runner-images
+    runs-on: ubuntu-22.04
+
+    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions:
+      contents: read # for actions/checkout
+      packages: write # for OCI build
+      #id-token: write # for requesting OIDC JWT from 3rd party
+
+    steps:
+
+      # debug
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event from ${{ github.actor }}."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      # checkout
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
 #      # https://docs.docker.com/build/ci/github-actions/multi-platform/
 #      # QEMU for software emulation of multiple platforms
 #      - name: Set up QEMU
