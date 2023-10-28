@@ -66,6 +66,12 @@ jobs:
           echo "GITHUB_SHA = $GITHUB_SHA"
           short_sha=`git rev-parse --short $GITHUB_SHA`
           echo "short SHA = $short_sha"
+          echo git for-each-ref | grep ^$GITHUB_SHA
+          git for-each-ref | grep ^$GITHUB_SHA
+          echo trying with filter for origin
+          git for-each-ref | grep ^$GITHUB_SHA | grep origin
+          echo trying 2nd time
+          git for-each-ref | grep ^$GITHUB_SHA | grep origin | grep -v HEAD | head -n1
           branch_name=`git for-each-ref | grep ^$GITHUB_SHA | grep origin | grep -v HEAD | head -n1 | sed "s/.*\///"`
           echo tag $GITHUB_REF_NAME is on branch $branch_name
 
