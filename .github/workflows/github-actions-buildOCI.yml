@@ -43,22 +43,22 @@ jobs:
 #      # Docker buildx/buildkit for multi-platform builds
 #      - name: Set up Docker Buildx
 #        uses: docker/setup-buildx-action@v3
-#
-#      # debug
-#      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-#      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-#      - name: List files in the repository
-#        run: |
-#          ls ${{ github.workspace }}
-#      - run: echo "🍏 This job's status is ${{ job.status }}."
-#
-#      # debug github context and env
-#      - name: Dump env
-#        run: env | sort
-#      - name: Dump GitHub context
-#        env:
-#          GITHUB_CONTEXT: ${{ toJson(github) }}
-#        run: echo "$GITHUB_CONTEXT"
+
+      # debug
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+      # debug github context and env
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 #
 #      # Github container registry credentials
 #      - name: Log in to the Github Container registry ${{ env.GH_REGISTRY }} as ${{ github.actor }}
