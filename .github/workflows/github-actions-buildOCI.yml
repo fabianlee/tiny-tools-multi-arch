@@ -59,6 +59,15 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
+
+      - name: calculate branch name of tag
+        if: $GITHUB_REF_TYPE == "tag"
+        run: |
+          echo "GITHUB_SHA = $GITHUB_SHA"
+          short_sha=`git rev-parse --short $GITHUB_SHA)`
+          echo "short SHA = $short_sha"
+          git for-each-ref | grep ^$GITHUB_SHA | grep origin | head -n1 | sed "s/.*\///"
+
 #
 #      # Github container registry credentials
 #      - name: Log in to the Github Container registry ${{ env.GH_REGISTRY }} as ${{ github.actor }}
