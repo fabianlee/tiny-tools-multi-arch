@@ -23,7 +23,6 @@ jobs:
     permissions:
       contents: read # for actions/checkout
       packages: write # for OCI build
-      #id-token: write # for requesting OIDC JWT from 3rd party
 
     steps:
 
@@ -62,7 +61,7 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
 
-      - name: calculate branch name of tag
+      - name: calculate branch name IF tag
         if: github.ref_type == 'tag'
         run: |
           echo "GITHUB_SHA = $GITHUB_SHA"
