@@ -64,6 +64,7 @@ jobs:
       - name: calculate branch name IF tag
         if: github.ref_type == 'tag' # 'branch' if regular push
         run: |
+          echo "GITHUB_REF_NAME = $GITHUB_REF_NAME"
           echo "GITHUB_SHA = $GITHUB_SHA"
           short_sha=`git rev-parse --short $GITHUB_SHA`
           echo "short SHA = $short_sha"
