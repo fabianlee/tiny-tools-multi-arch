@@ -8,7 +8,7 @@ blog article: https://fabianlee.org/2023/09/16/docker-building-multi-platform-im
 
 blog: https://fabianlee.org/2023/09/16/github-automated-build-and-publish-of-multi-platform-container-image-with-github-actions/
 
-```bash
+```
 docker run -ti fabianlee/tiny-tools-multi-arch sh
 ```
 

@@ -26,8 +26,9 @@ CAPS=
 VOL_FLAG=
 #VOL_FLAG= -v $(shell pwd)/chrony.conf:/etc/chrony/chrony.conf:ro
 
-# disable provenance attestations
+# disable provenance attestations (docker 24, flag does not exist for Docker 20)
 PROVENANCE_FLAG= --provenance=false
+#PROVENANCE_FLAG= 
 
 # build time values
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')

@@ -17,8 +17,21 @@ RUN apk add --update tzdata --no-cache &&\
 # yq: yaml parsing
 # ntpsec: ntpdig for ntp client time query (ntpdig pool.ntp.org)
 # mutt,ssmtp: SMTP client testing
+# openssl: for conversions
 RUN apk add --update --no-cache \
-  curl bind-tools netcat-openbsd coreutils jq ntpsec mutt ssmtp
+  curl bind-tools netcat-openbsd coreutils jq yq ntpsec mutt ssmtp
+
+# jwker - PEM/JWT converter, https://github.com/jphastings/jwker
+RUN wget https://github.com/jphastings/jwker/releases/download/v0.2.1/jwker_Linux_x86_64.tar.gz && \
+  tar xvfz jwker_Linux_x86_64.tar.gz && \
+  cp jwker /usr/local/bin/. && \
+  rm jwker_*.tar.gz
+
+# step CLI for cert, JWT, OAuth operations, https://github.com/smallstep/cli
+RUN wget https://github.com/smallstep/cli/releases/download/v0.25.0/step_linux_0.25.0_amd64.tar.gz && \
+  tar xvfz step_linux_0.25.0_amd64.tar.gz && \
+  cp step_0.25.0/bin/step /usr/local/bin/. && \
+  rm step_*.tar.gz
 
 # standard Docker arguments
 ARG TARGETPLATFORM
