@@ -17,7 +17,6 @@ RUN apk add --update tzdata --no-cache &&\
 # yq: yaml parsing
 # ntpsec: ntpdig for ntp client time query (ntpdig pool.ntp.org)
 # mutt,ssmtp: SMTP client testing
-# openssl: for conversions
 RUN apk add --update --no-cache \
   curl bind-tools netcat-openbsd coreutils jq yq ntpsec mutt ssmtp
 
