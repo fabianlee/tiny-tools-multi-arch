@@ -2,8 +2,6 @@
 
 Based on Alpine. Includes: curl, dig, nc, [jq](https://jqlang.github.io/jq/), [yq](https://github.com/mikefarah/yq), ntpdig, mutt, ssmtp, [jwker](https://github.com/jphastings/jwker), [step](https://github.com/smallstep/cli)
 
-Image Size: ~49Mb
-
 blog article: https://fabianlee.org/2023/09/16/docker-building-multi-platform-images-that-use-fat-manifest-list-index/
 
 blog: https://fabianlee.org/2023/09/16/github-automated-build-and-publish-of-multi-platform-container-image-with-github-actions/
