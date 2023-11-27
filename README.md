@@ -1,6 +1,6 @@
 # Tiny Tools with manifest list for multiple architectures (amd64,arm64)
 
-Based on Alpine. Includes: curl, dig, nc, (jq)[https://jqlang.github.io/jq/], (yq)[https://github.com/mikefarah/yq], ntpdig, mutt, ssmtp, (jwker)[https://github.com/jphastings/jwker], (step)[https://github.com/smallstep/cli]
+Based on Alpine. Includes: curl, dig, nc, [jq](https://jqlang.github.io/jq/), [yq](https://github.com/mikefarah/yq), ntpdig, mutt, ssmtp, [jwker](https://github.com/jphastings/jwker), [step](https://github.com/smallstep/cli)
 
 Image Size: ~32Mb
 
