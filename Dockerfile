@@ -30,7 +30,8 @@ RUN wget https://github.com/jphastings/jwker/releases/download/v0.2.1/jwker_Linu
 RUN wget https://github.com/smallstep/cli/releases/download/v0.25.0/step_linux_0.25.0_amd64.tar.gz && \
   tar xvfz step_linux_0.25.0_amd64.tar.gz && \
   cp step_0.25.0/bin/step /usr/local/bin/. && \
-  rm step_*.tar.gz
+  rm step_*.tar.gz && \
+  rm -fr step_0.25.0
 
 # standard Docker arguments
 ARG TARGETPLATFORM
